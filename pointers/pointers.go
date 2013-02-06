@@ -15,6 +15,7 @@ func main() {
   fmt.Println("b=", b) //<nil>
 
   b = &a
+  d = &a[0]
 
   fmt.Println("b=", b)//0xf840028220
   fmt.Println("*b=", *b)//Mystring
