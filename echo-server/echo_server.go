@@ -4,7 +4,8 @@ import(
   "fmt"
   "net"
   //"strings"
-  "io"
+  //"io"
+  "bufio"
 )
 
 type Message struct{
@@ -14,37 +15,36 @@ type Message struct{
 func main() {
   
   psock, _ := net.Listen("tcp", "127.0.0.1:4000")
-  conn, _ :=  psock.Accept()
+  for{
+    conn, _ :=  psock.Accept()
 
-  messages_channel := make(chan Message, 5)
+    go func(){
+      messages_channel := make(chan Message, 5)
 
-  go func() {
-    for{
-      select {
-      case msg := <-messages_channel:
-        fmt.Println("Recieve to channel: ", msg)
-        conn.Write([]byte("Echo: " + msg.Text + "\n\r"))
+      go func() {
+        for{
+          select {
+          case msg := <-messages_channel:
+            fmt.Println("Echo to client: ", msg.Text)
+            conn.Write([]byte("Echo: " + msg.Text + "\n"))
+          }
+        }
+      }();
+
+      var message Message
+      //var line string
+      reader := bufio.NewReader(conn)
+
+      for {
+        line, _ := reader.ReadString('\n')
+        
+        s_line := line[:len(line)-1] 
+        fmt.Println("Message recieve: ", s_line)
+        message = Message{s_line}
+        messages_channel <- message
+      
       }
-    }
-  }();
-
-  buffer := make([]byte, 24)
-  var message Message;
-  for {
-    l,e := conn.Read(buffer)
-    fmt.Println("\tReaded bytes: ", l)
-    fmt.Println("\tError: ", e)
-    switch {
-    case e == nil:
-      str := string(buffer)
-      fmt.Println("\tMessage recieve: ", str)
-      message = Message{str}
-      messages_channel <- message
-    case e == io.EOF:
-      fmt.Println("EOF")
-    }
-  
+    }()
   }
-  return
-  
+
 }
