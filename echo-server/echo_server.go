@@ -10,29 +10,32 @@ import(
 
 type Message struct{
   Text string
+  Conn net.Conn
 }
 
 func main() {
   
   psock, _ := net.Listen("tcp", "127.0.0.1:4000")
-  for{
+
+  messages_channel := make(chan Message, 5)
+
+  go func() {
+    for{
+      select {
+      case msg := <-messages_channel:
+        fmt.Println("Echo to client: ", msg.Text)
+        msg.Conn.Write([]byte("Echo: " + msg.Text + "\n"))
+      }
+    }
+  }();
+
+
+  for {
     conn, _ :=  psock.Accept()
 
     go func(){
-      messages_channel := make(chan Message, 5)
-
-      go func() {
-        for{
-          select {
-          case msg := <-messages_channel:
-            fmt.Println("Echo to client: ", msg.Text)
-            conn.Write([]byte("Echo: " + msg.Text + "\n"))
-          }
-        }
-      }();
 
       var message Message
-      //var line string
       reader := bufio.NewReader(conn)
 
       for {
@@ -40,7 +43,8 @@ func main() {
         
         s_line := line[:len(line)-1] 
         fmt.Println("Message recieve: ", s_line)
-        message = Message{s_line}
+
+        message = Message{s_line, conn}
         messages_channel <- message
       
       }
