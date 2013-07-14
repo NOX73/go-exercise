@@ -35,6 +35,8 @@ func main() {
 
   go twitter_api.TwitterStream(ch, credentials, config.Params)
 
+  fmt.Println("Waiting tweets ... ")
+
   for {
     message := <- ch
 

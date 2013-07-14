@@ -4,4 +4,4 @@ credentials:
   oauth_consumer_secret: cuseCPmxY4taUEmouOhXIvR7MVSUWdRKjKHvHKgVvOk
   oauth_token_secret: tO5hW1ye3myBnT78DspVbTKWFgadvKeU1EOiV3o5Tg
 params:
-  track: twitter
+  track: "twitter"
