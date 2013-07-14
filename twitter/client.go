@@ -22,8 +22,6 @@ func main() {
   err := goyaml.Unmarshal(config_yaml, &config)
   if err != nil{ panic(err) }
 
-  fmt.Println("Config: ", config)
-
   fmt.Println("Connecting to twitter api ... ")
 
   credentials := twitter_api.NewCredentials(
@@ -46,7 +44,7 @@ func main() {
       break
     }
 
-    fmt.Printf("Channel length: %s \n", len(ch))
+    fmt.Printf("Channel length: %d \n", len(ch))
   }
 
 
