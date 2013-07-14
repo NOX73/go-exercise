@@ -44,7 +44,8 @@ func main() {
       break
     }
 
-    fmt.Printf("Channel length: %d \n", len(ch))
+    fmt.Printf("Tweet from %s: %q \n", message.Tweet.UserName(), message.Tweet.Text())
+    //fmt.Printf("Channel length: %d \n", len(ch))
   }
 
 
